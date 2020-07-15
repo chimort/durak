@@ -11,29 +11,31 @@
 import random
 
 class Card:
-    def __init__(self, suit, rank):
+    def __init__(self, rank, suit):
         self.rank = rank
         self.suit = suit
-
     def __str__(self):
         return f'{self.rank} {self.suit}'
 
-
 class Deck:
     def __init__(self):
-        self.cards = []
-        self.trump = []
         suits = ['chervi', 'kresti', 'bubni', 'piks']
+
         ranks = [6, 7, 8, 9, 10, 11, 12, 13, 14]
         trumpSuit = random.choice(suits)#берем рандомную масть из всех остальных
+
+        self.cards = []
+
         for suit in suits:
             for rank in ranks:
-                self.cards.append(Card(rank, suit))#делаем колоду карт
-                self.cards = dict()
+                card = Card(rank, suit)
+                self.cards.append(card)#делаем колоду карт
         random.shuffle(self.cards) #перемешиваем колоду
 
+        self.trump = random.choice(self.cards)
+
     def check(self):#делаем проверку на козыря и делаем его сильнее обычных карт
-        return str(self.cards)
+        return [str(i) for i in self.cards]
 
 
 def start():
@@ -50,37 +52,32 @@ def start():
 
 d = Deck()
 
-def Trump(): #делаем козырную карту
-    trumpCard = random.choice(d.cards)
-    print(f'козырь: {trumpCard}')
-
-
 def distribution(): #делаем раздачу
-    on_hand_cards = 0
     on_hand = []
-    dist = random.choice(d.cards)
-    while on_hand_cards < 6:
-        if dist not in on_hand:
-            on_hand.append(str(dist))
-            on_hand_cards += 1
-            dist = random.choice(d.cards)
-    print(f'у вас на руках: {on_hand}')
+
+    for i in range(6):
+        dist = d.cards[0]
+        d.cards = d.cards[1:]
+
+        on_hand.append(str(dist))
+    print(f'у вас на руках {len(on_hand)} карт: {", ".join(on_hand)}')
 
 
 
 def Gameplay():
     userChoise = input('введите 1 чтобы посмотреть козырь, введите 2 чтобы посмотреть ваши карты ')
     if userChoise == '1':
-        return Trump()
+        return print(str(d.trump))
     elif userChoise == '2':
         return distribution()
     else:
         print('вы ввели что-то не то, попробуйте еще раз')
         return Gameplay()
 
+if __name__ == "__main__":
+    Gameplay()
 
 
+input()
 #start()
-print(d.check())
-
-
+print(", ".join(d.check()))
